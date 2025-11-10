@@ -9,7 +9,7 @@ transform:
     - -0.5
     - 0.5
 
-  - __class_fullname__: JpegCompression
+  - __class_fullname__: albumentations.augmentations.transforms.JpegCompression
     p: 0.5
     quality_lower: 30
     quality_upper: 100

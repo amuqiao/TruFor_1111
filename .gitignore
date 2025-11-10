@@ -128,3 +128,5 @@ dmypy.json
 
 # Dataset directories
 TruFor_train_test/dataset/data/IMD2020/
+TruFor_train_test/log/
+TruFor_train_test/weights/

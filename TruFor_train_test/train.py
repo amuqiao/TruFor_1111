@@ -41,6 +41,30 @@ from lib.utils import create_logger, FullModel, adjust_learning_rate
 
 from dataset.data_core import myDataset
 import albumentations
+# 尝试不同的导入方式，确保兼容不同版本的albumentations
+try:
+    from albumentations.augmentations.transforms import JpegCompression
+except ImportError:
+    try:
+        from albumentations import JpegCompression
+    except ImportError:
+        # 如果都导入失败，在运行时创建一个模拟的JpegCompression类
+        class JpegCompression(albumentations.ImageOnlyTransform):
+            def __init__(self, quality_lower=30, quality_upper=100, p=0.5):
+                super().__init__(p=p)
+                self.quality_lower = quality_lower
+                self.quality_upper = quality_upper
+            def apply(self, img, quality=None, **params):
+                import cv2
+                encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), quality]
+                result, encimg = cv2.imencode('.jpg', img, encode_param)
+                if not result:
+                    return img
+                return cv2.imdecode(encimg, 1)
+            def get_params_dependent_on_targets(self, params):
+                return {'quality': np.random.randint(self.quality_lower, self.quality_upper + 1)}
+            def get_transform_init_args_names(self):
+                return ('quality_lower', 'quality_upper')
 
 
 def main():
@@ -72,15 +96,23 @@ def main():
         'valid_global_steps': 0,
     }
 
-    if config.TRAIN.AUG is not None:
-        aug_train = albumentations.load(config.TRAIN.AUG, data_format='yaml')
+    if config.TRAIN.AUG and 'aug_res_comp.yaml' in config.TRAIN.AUG:
+        # 手动创建与配置文件相同的增强变换
+        aug_train = albumentations.Compose([
+            albumentations.RandomScale(scale_limit=(-0.5, 0.5), interpolation=1, p=0.5),
+            JpegCompression(quality_lower=30, quality_upper=100, p=0.5)
+        ])
     else:
-        aug_train = None
+        aug_train = albumentations.load(config.TRAIN.AUG, data_format='yaml') if config.TRAIN.AUG is not None else None
 
-    if config.VALID.AUG is not None:
-        aug_valid = albumentations.load(config.VALID.AUG, data_format='yaml')
+    if config.VALID.AUG and 'aug_res_comp.yaml' in config.VALID.AUG:
+        # 验证集使用相同的增强配置
+        aug_valid = albumentations.Compose([
+            albumentations.RandomScale(scale_limit=(-0.5, 0.5), interpolation=1, p=0.5),
+            JpegCompression(quality_lower=30, quality_upper=100, p=0.5)
+        ])
     else:
-        aug_valid = None
+        aug_valid = albumentations.load(config.VALID.AUG, data_format='yaml') if config.VALID.AUG is not None else None
 
     logger.info(f'Train augmentation: {config.TRAIN.AUG} {aug_train}')
     logger.info(f'Validation augmentation: {config.VALID.AUG} {aug_valid}')
