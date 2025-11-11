@@ -163,7 +163,7 @@ class EncoderDecoder(nn.Module):
         if 'NP_WEIGHTS' in self.cfg and not self.cfg.NP_WEIGHTS == '' and self.cfg.NP_WEIGHTS is not None:
             np_weights = self.cfg.NP_WEIGHTS
             assert os.path.isfile(np_weights)
-            dat = torch.load(np_weights, map_location=torch.device('cpu'))['network']
+            dat = torch.load(np_weights, map_location=torch.device('cpu'), weights_only=False)['network']
             logging.info(f'Noiseprint++ weights: {np_weights}')
             self.dncnn.load_state_dict(dat)
 

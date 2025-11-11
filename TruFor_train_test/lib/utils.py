@@ -188,7 +188,8 @@ class AverageMeter(object):
         return self.val
 
     def average(self):
-        return self.avg
+        # 确保即使没有更新过，也不会返回None
+        return self.avg if self.avg is not None else 0.0
 
 
 
@@ -227,7 +228,7 @@ def get_confusion_matrix(label, pred, size, num_class, ignore=-1):
     output = pred.cpu().numpy().transpose(0, 2, 3, 1)
     seg_pred = np.asarray(np.argmax(output, axis=3), dtype=np.uint8)
     seg_gt = np.asarray(
-    label.cpu().numpy()[:, :size[-2], :size[-1]], dtype=np.int)
+    label.cpu().numpy()[:, :size[-2], :size[-1]], dtype=np.int32)
 
     ignore_index = seg_gt != ignore
     seg_gt = seg_gt[ignore_index]
@@ -259,7 +260,7 @@ def get_confusion_matrix_1ch(label, confid, size, num_class, ignore=-1):
     # confid is without the sigmoid, so have to do >0
     seg_pred = np.asarray(output>0, dtype=np.uint8)
     seg_gt = np.asarray(
-        label.cpu().numpy()[:, :size[-2], :size[-1]], dtype=np.int)
+        label.cpu().numpy()[:, :size[-2], :size[-1]], dtype=np.int32)
 
     ignore_index = seg_gt != ignore
     seg_gt = seg_gt[ignore_index]

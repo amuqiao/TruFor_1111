@@ -156,7 +156,7 @@ def main():
     if not config.TRAIN.PRETRAINING == '' and not config.TRAIN.PRETRAINING == None:
         model_state_file = config.TRAIN.PRETRAINING
         assert os.path.isfile(model_state_file)
-        checkpoint = torch.load(model_state_file, map_location=lambda storage, loc: storage)
+        checkpoint = torch.load(model_state_file, map_location=lambda storage, loc: storage, weights_only=False)
         state_dict = checkpoint['state_dict']
         try:
             model.model.module.load_state_dict(state_dict, strict=False)
@@ -171,7 +171,7 @@ def main():
     if config.TRAIN.RESUME:
         model_state_file = os.path.join(final_output_dir, 'checkpoint.pth.tar')
         if os.path.isfile(model_state_file):
-            checkpoint = torch.load(model_state_file, map_location=lambda storage, loc: storage)
+            checkpoint = torch.load(model_state_file, map_location=lambda storage, loc: storage, weights_only=False)
             best_value = checkpoint['best_value']
             assert checkpoint['best_key']==best_key
             last_epoch = checkpoint['epoch']

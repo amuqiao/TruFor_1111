@@ -454,7 +454,7 @@ def load_dualpath_model(model, model_file):
     # load raw state_dict
     t_start = time.time()
     if isinstance(model_file, str):
-        raw_state_dict = torch.load(model_file, map_location=torch.device('cpu'))
+        raw_state_dict = torch.load(model_file, map_location=torch.device('cpu'), weights_only=False)
         #raw_state_dict = torch.load(model_file)
         #print('raw_state_dict', raw_state_dict.keys())
         if 'model' in raw_state_dict.keys():
@@ -490,7 +490,7 @@ def load_onepath_model(model, model_file):
     # load raw state_dict
     t_start = time.time()
     if isinstance(model_file, str):
-        raw_state_dict = torch.load(model_file, map_location=torch.device('cpu'))
+        raw_state_dict = torch.load(model_file, map_location=torch.device('cpu'), weights_only=False)
         # raw_state_dict = torch.load(model_file)
         # print('raw_state_dict', raw_state_dict.keys())
         if 'model' in raw_state_dict.keys():
@@ -523,7 +523,7 @@ def load_onepath2_model(model, model_file):
     # load raw state_dict
     t_start = time.time()
     if isinstance(model_file, str):
-        raw_state_dict = torch.load(model_file, map_location=torch.device('cpu'))
+        raw_state_dict = torch.load(model_file, map_location=torch.device('cpu'), weights_only=False)
         # raw_state_dict = torch.load(model_file)
         # print('raw_state_dict', raw_state_dict.keys())
         if 'model' in raw_state_dict.keys():

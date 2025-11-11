@@ -262,7 +262,11 @@ def validate(config, testloader, model, writer_dict, valid_set="valid"):
         metric_dict['avg_mIoU_smooth_CONF'] = c_avg_mIoU_s.average()
 
     for metric in metric_dict:
-        writer.add_scalar(valid_set + '_' + metric, metric_dict[metric], global_steps)
+        # 检查值是否为None，避免NoneType错误
+        if metric_dict[metric] is not None:
+            writer.add_scalar(valid_set + '_' + metric, metric_dict[metric], global_steps)
+        else:
+            print(f"Warning: {metric} is None, skipping TensorBoard logging")
 
     writer_dict['valid_global_steps'] = global_steps + 1
 

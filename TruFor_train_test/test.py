@@ -79,7 +79,7 @@ else:
     raise ValueError("Model file is not specified.")
 
 print('=> loading model from {}'.format(model_state_file))
-checkpoint = torch.load(model_state_file, map_location=torch.device(device))
+checkpoint = torch.load(model_state_file, map_location=torch.device(device), weights_only=False)
 print("Epoch: {}".format(checkpoint['epoch']))
 
 model = get_model(config)
